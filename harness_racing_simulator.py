@@ -52,8 +52,11 @@ def start_game_graphical(horses,race_type):
                 distance_remaining = 2400 - horse["distance"]
                 distance_remaining_gui = cross_multiplication(2400,120,distance_remaining)
                 distance_gui = cross_multiplication(2400,120,horse["distance"])
+                if horse["finished"]: horse["color"] = "\033[92m"
+                if horse["disqualified"]: horse["color"] = "\033[91m"
                 if horse["distance"]  > 0:
-                    print(" |" + " " * distance_gui + "♘" + " " * distance_remaining_gui + "|")
+                    print("" + horse["color"] + " |" + " " * distance_gui + "♘" + " " * distance_remaining_gui + "|")
+
                 else:
                     print("♘ |" + " " * 120 + "|")
                 if not horse["disqualified"] and not horse["finished"]:
@@ -220,7 +223,8 @@ def init_horses(num_horses) :
             "disqualified": False,
             "distance": 0,
             "finished": False,
-            "id": horse
+            "id": horse,
+            "color" : "\033[0m"
         }
         horses.append(horse_dict)
 
