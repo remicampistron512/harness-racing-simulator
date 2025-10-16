@@ -21,6 +21,10 @@ SPEED_CHART : dict = {
 # Le tableau des distances parcourues selon le jet de dé
 DISTANCE_CHART = [0,23,46,69,92,115,138]
 
+#----------------------------------------------------------------------------------------------------------------------#
+#------------------------------ Fonctions utilitaires -----------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+
 
 def cross_multiplication(a,b,c):
     """
@@ -33,6 +37,82 @@ def cross_multiplication(a,b,c):
     :return:
     """
     return floor((b * c) / a)
+
+
+
+
+
+
+def change_speed(speed,die_roll):
+    """
+    Renvoie la variation de vitesse (peut être négative, nulle, positive ou None) en consultant le tableau SPEED_CHART
+     selon la vitesse actuelle et le résultat d’un dé à 6 faces.
+    :param speed:
+    :param die_roll:
+    :return:
+    """
+    return SPEED_CHART[speed][die_roll - 1]
+
+
+
+def roll_die(die_size):
+    """
+    Simule un lancer de dé à die_size faces et renvoie une valeur entière uniforme entre 1 et die_size
+    :param die_size: nombre de faces
+    :return:
+    """
+    return random.randrange(1, die_size+1)
+
+
+def next_turn():
+    """
+    Met la simulation en pause jusqu’à ce que l’utilisateur appuie sur Entrée (permet d’avancer tour par tour).
+    :return:
+    """
+    input("Appuyez sur entrée pour avancer la course")
+
+
+#----------------------------------------------------------------------------------------------------------------------#
+#------------------------------ Fonctions de contrôles d'entrées utilisateur  -----------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+
+
+def ask_int_in_range(prompt, min_val, max_val):
+    """
+    Valide l'entrée utilisateur, retire les espaces,  s'assure qu'il s'agit bien d'un nombre et qu'il se situe
+    entre la valeur minimale et la valeur maximale
+    :param prompt:
+    :param min_val:
+    :param max_val:
+    :return:
+    """
+    while True:
+        txt = input(prompt).strip()
+        if txt.isdigit():
+            val = int(txt)
+            if min_val <= val <= max_val:
+                return val
+        print(f"Valeur invalide. Entrez un entier entre {min_val} et {max_val}.")
+
+
+def ask_horse_race_type():
+    """
+    Demande à l’utilisateur le type de course ("tierce", "quarte", "quinte").
+    Repose la question tant que l’entrée n’est pas valide. Renvoie la chaîne choisie.
+    :return:
+    """
+    race_type = input("Quel type de course ? (tierce,quarte,quinte) : ")
+    if race_type == "quinte" or race_type == "quarte" or race_type == "tierce":
+        return race_type
+    else:
+        print("merci de rentrer un des termes suivants: 'quinte','quarte','tierce'")
+        return ask_horse_race_type()
+
+
+
+#----------------------------------------------------------------------------------------------------------------------#
+#------------------------------ Fonctions principales de jeu   --------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
 
 
 def start_game_graphical(horses,race_type):
@@ -109,51 +189,6 @@ def start_game_graphical(horses,race_type):
     print(", ".join(map(str, race_result)))
 
 
-def init_game(num_horses,gui=False):
-    """
-    Initialise la course : crée la liste des chevaux via init_horses, demande le type de course avec ask_horse_race_type
-    puis lance soit la version graphique (start_game_graphical) si gui=True, soit la version texte (start_game).
-    :param num_horses:
-    :param gui:
-    :return:
-    """
-    horses = init_horses(num_horses)
-    race_type = ask_horse_race_type()
-    if gui:
-        start_game_graphical(horses,race_type)
-    else:
-        start_game(horses,race_type)
-
-
-def change_speed(speed,die_roll):
-    """
-    Renvoie la variation de vitesse (peut être négative, nulle, positive ou None) en consultant le tableau SPEED_CHART
-     selon la vitesse actuelle et le résultat d’un dé à 6 faces.
-    :param speed:
-    :param die_roll:
-    :return:
-    """
-    return SPEED_CHART[speed][die_roll - 1]
-
-
-
-def roll_die(die_size):
-    """
-    Simule un lancer de dé à die_size faces et renvoie une valeur entière uniforme entre 1 et die_size
-    :param die_size: nombre de faces
-    :return:
-    """
-    return random.randrange(1, die_size+1)
-
-
-def next_turn():
-    """
-    Met la simulation en pause jusqu’à ce que l’utilisateur appuie sur Entrée (permet d’avancer tour par tour).
-    :return:
-    """
-    input("Appuyez sur entrée pour avancer la course")
-
-
 def start_game(horses,race_type):
     """
     Lance la simulation en version texte (sans la barre de progression graphique).
@@ -175,7 +210,7 @@ def start_game(horses,race_type):
             print("la course a commencé il y a " + str(turns_count * 10) + " sec")
             for horse in horses:
                 if not horse["disqualified"] and not horse["finished"]:
-                    print(f"Le cheval ♘ {horse["id"]} a une vitesse de {horse["speed"]} et a parcouru une distance de {horse["distance"]}m ")
+                    print(f"Le cheval  {horse["id"]} a une vitesse de {horse["speed"]} et a parcouru une distance de {horse["distance"]}m ")
                 elif not horse["disqualified"] and  horse["finished"] :
                     print(f"Le cheval {horse["id"]} a fini la course")
                 elif horse["disqualified"] and not horse["finished"]:
@@ -219,6 +254,11 @@ def start_game(horses,race_type):
 
 
 
+#----------------------------------------------------------------------------------------------------------------------#
+#------------------------------ Fonctions d'initialisation ------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+
+
 def init_horses(num_horses) :
     """
     Crée et renvoie la liste des chevaux (dictionnaires) initialisés : vitesse 0, non disqualifiés, distance 0, no
@@ -240,18 +280,22 @@ def init_horses(num_horses) :
 
     return horses
 
-def ask_horse_race_type():
+
+def init_game(num_horses,gui=False):
     """
-    Demande à l’utilisateur le type de course ("tierce", "quarte", "quinte").
-    Repose la question tant que l’entrée n’est pas valide. Renvoie la chaîne choisie.
+    Initialise la course : crée la liste des chevaux via init_horses, demande le type de course avec ask_horse_race_type
+    puis lance soit la version graphique (start_game_graphical) si gui=True, soit la version texte (start_game).
+    :param num_horses:
+    :param gui:
     :return:
     """
-    race_type = input("Quel type de course ? (tierce,quarte,quinte) : ")
-    if race_type == "quinte" or race_type == "quarte" or race_type == "tierce":
-        return race_type
+    horses = init_horses(num_horses)
+    race_type = ask_horse_race_type()
+    if gui:
+        start_game_graphical(horses,race_type)
     else:
-        print("merci de rentrer un des termes suivants: 'quinte','quarte','tierce'")
-        return ask_horse_race_type()
+        start_game(horses,race_type)
+
 
 if __name__ == '__main__':
     init_game(12,True)
