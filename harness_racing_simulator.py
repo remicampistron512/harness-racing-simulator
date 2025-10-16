@@ -134,8 +134,14 @@ def start_game_graphical(horses, race_type):
                 distance_gui = cross_multiplication(2400, 120, horse["distance"])
                 if horse["finished"]: horse["color"] = "\033[92m"
                 if horse["disqualified"]: horse["color"] = "\033[91m"
-                if horse["distance"] > 0:
-                    print("" + horse["color"] + " |" + " " * distance_gui + "♘" + " " * distance_remaining_gui + "|")
+                if horse["distance"] > 0 and not horse["finished"]:
+                    display_line = "" + horse["color"] + " |" + " " * distance_gui + "♘" + " " * distance_remaining_gui
+                    start = display_line.ljust(120)
+                    finish_line = '|'
+                    end = finish_line.rjust(3)
+                    print(start, end)
+                elif horse["finished"]:
+                    print("" + horse["color"] + "  |" + " " * 123 + "| ♘")
                 else:
                     print("♘ |" + " " * 120 + "|")
 
