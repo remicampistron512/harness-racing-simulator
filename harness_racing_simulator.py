@@ -30,7 +30,7 @@ DISTANCE_CHART = [0, 23, 46, 69, 92, 115, 138]
 
 def cross_multiplication(a, b, c):
     """
-    Fait un produit en croix  et renvoie le résultat arrondi à l’inférieur (`floor`).
+    Fait un produit en croix et renvoie le résultat arrondi à l’inférieur ("floor").
     Sert ici à convertir une distance (en m) vers une échelle d’affichage (en caractères).
 
     :param a:
@@ -44,7 +44,7 @@ def cross_multiplication(a, b, c):
 def change_speed(speed, die_roll):
     """
     Renvoie la variation de vitesse (peut être négative, nulle, positive ou None) en consultant le tableau SPEED_CHART
-     selon la vitesse actuelle et le résultat d’un dé à 6 faces.
+     selon la vitesse actuelle et le résultat d’un dé à six faces.
     :param speed:
     :param die_roll:
     :return:
@@ -76,7 +76,7 @@ def next_turn():
 
 def ask_int_in_range(prompt, min_val, max_val):
     """
-    Valide l'entrée utilisateur, retire les espaces,  s'assure qu'il s'agit bien d'un nombre et qu'il se situe
+    Valide l'entrée utilisateur, retire les espaces, s'assure qu'il s'agit bien d'un nombre et qu'il se situe
     entre la valeur minimale et la valeur maximale
     :param prompt:
     :param min_val:
@@ -114,7 +114,7 @@ def ask_horse_race_type():
 def start_game_graphical(horses, race_type):
     """
     Lance la simulation graphique (ASCII) d’une course de trot attelé sur 2400 m.
-    À chaque tour (10 s simulées) : met à jour la vitesse selon un jet de dé, avance chaque cheval, gère disqualifications et arrivées, affiche une barre avec la position (♘) et annonce l’état de chaque cheval.
+    À chaque tour (10 s simulées) : met à jour la vitesse selon un jet de dé, avance chaque cheval, gère disqualifications et arrivées, affiche une barre avec la position (♘).
     Arrête quand tous les chevaux sauf les disqualifiés ont franchi la ligne, puis affiche le tiercé/quarté/quinté suivant le race_type.
     :param horses:
     :param race_type:
@@ -127,7 +127,7 @@ def start_game_graphical(horses, race_type):
     race_result = []
     while True:
         if turns_count != 0:
-            print("la course a commencé il y a " + str(turns_count * 10) + " sec")
+            # Affichage
             for horse in horses:
                 distance_remaining = 2400 - horse["distance"]
                 distance_remaining_gui = cross_multiplication(2400, 120, distance_remaining)
@@ -136,22 +136,16 @@ def start_game_graphical(horses, race_type):
                 if horse["disqualified"]: horse["color"] = "\033[91m"
                 if horse["distance"] > 0:
                     print("" + horse["color"] + " |" + " " * distance_gui + "♘" + " " * distance_remaining_gui + "|")
-
                 else:
                     print("♘ |" + " " * 120 + "|")
-                if not horse["disqualified"] and not horse["finished"]:
-                    print(
-                        f"Le cheval {horse["id"]} a une vitesse de {horse["speed"]} et a parcouru une distance de {horse["distance"]}m ")
-                elif not horse["disqualified"] and horse["finished"]:
-                    print(f"Le cheval {horse["id"]} a fini la course")
-                elif horse["disqualified"] and not horse["finished"]:
-                    print(f"Le cheval {horse["id"]} a été disqualifié !")
+
         else:
             print("Les chevaux sont au départ")
             for _ in horses:
                 print("♘ |" + " " * 120 + "|")
 
         for horse in horses:
+            # logique
             if horse["finished"] is False:
                 speed_change = change_speed(horse["speed"], roll_die(6))
                 if speed_change is not None:
@@ -193,7 +187,7 @@ def start_game(horses, race_type):
     À chaque tour : calcule les changements de vitesse, avance les chevaux via DISTANCE_CHART,
     gère disqualifications/arrivées, affiche l’état, attend Entrée avec next_turn.
     À la fin, annonce le tiercé/quarté/quinté en fonction de race_type.
-        :param horses: la liste des chevaux
+        :param horses: La liste des chevaux
         :param race_type: le type de course
         :return:
         """
@@ -258,8 +252,8 @@ def start_game(horses, race_type):
 
 def init_horses(num_horses):
     """
-    Crée et renvoie la liste des chevaux (dictionnaires) initialisés : vitesse 0, non disqualifiés, distance 0, no
-    n arrivés, identifiant 1..num_horses, et couleur par défaut pour l’affichage.
+    Crée et renvoie la liste des chevaux (dictionnaires) initialisés : vitesse 0, non disqualifiés, distance 0, non
+     arrivés, identifiant, et couleur par défaut pour l’affichage.
     :param num_horses:
     :return:
     """
@@ -278,11 +272,10 @@ def init_horses(num_horses):
     return horses
 
 
-def init_game(num_horses, gui=False):
+def init_game(gui=False):
     """
     Initialise la course : crée la liste des chevaux via init_horses, demande le type de course avec ask_horse_race_type
     puis lance soit la version graphique (start_game_graphical) si gui=True, soit la version texte (start_game).
-    :param num_horses:
     :param gui:
     :return:
     """
@@ -297,4 +290,4 @@ def init_game(num_horses, gui=False):
 
 
 if __name__ == '__main__':
-    init_game(12, True)
+    init_game(True)
