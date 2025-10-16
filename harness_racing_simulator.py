@@ -24,7 +24,9 @@ DISTANCE_CHART = [0,23,46,69,92,115,138]
 
 def cross_multiplication(a,b,c):
     """
-    Produit en croix arrondi
+    Fait un produit en croix  et renvoie le résultat arrondi à l’inférieur (`floor`).
+    Sert ici à convertir une distance (en m) vers une échelle d’affichage (en caractères).
+
     :param a:
     :param b:
     :param c:
@@ -35,7 +37,9 @@ def cross_multiplication(a,b,c):
 
 def start_game_graphical(horses,race_type):
     """
-    La fonction principale d'affichage du jeu en version graphique
+    Lance la simulation graphique (ASCII) d’une course de trot attelé sur 2400 m.
+    À chaque tour (10 s simulées) : met à jour la vitesse selon un jet de dé, avance chaque cheval, gère disqualifications et arrivées, affiche une barre avec la position (♘) et annonce l’état de chaque cheval.
+    Arrête quand tous les chevaux sauf les disqualifiés ont franchi la ligne, puis affiche le tiercé/quarté/quinté suivant le race_type.
     :param horses:
     :param race_type:
     :return:
@@ -107,7 +111,8 @@ def start_game_graphical(horses,race_type):
 
 def init_game(num_horses,gui=False):
     """
-    initialise la course en passant le nombre de chevaux et le type de la course
+    Initialise la course : crée la liste des chevaux via init_horses, demande le type de course avec ask_horse_race_type
+    puis lance soit la version graphique (start_game_graphical) si gui=True, soit la version texte (start_game).
     :param num_horses:
     :param gui:
     :return:
@@ -122,7 +127,8 @@ def init_game(num_horses,gui=False):
 
 def change_speed(speed,die_roll):
     """
-    Changement de la vitesse du cheval en se basant sur le tableau des vitesses
+    Renvoie la variation de vitesse (peut être négative, nulle, positive ou None) en consultant le tableau SPEED_CHART
+     selon la vitesse actuelle et le résultat d’un dé à 6 faces.
     :param speed:
     :param die_roll:
     :return:
@@ -133,7 +139,7 @@ def change_speed(speed,die_roll):
 
 def roll_die(die_size):
     """
-    Fonction qui permet de lancer un dé à n faces
+    Simule un lancer de dé à die_size faces et renvoie une valeur entière uniforme entre 1 et die_size
     :param die_size: nombre de faces
     :return:
     """
@@ -142,7 +148,7 @@ def roll_die(die_size):
 
 def next_turn():
     """
-    Avance la course
+    Met la simulation en pause jusqu’à ce que l’utilisateur appuie sur Entrée (permet d’avancer tour par tour).
     :return:
     """
     input("Appuyez sur entrée pour avancer la course")
@@ -150,7 +156,10 @@ def next_turn():
 
 def start_game(horses,race_type):
     """
-        La fonction principale d'affichage du jeu en version texte
+    Lance la simulation en version texte (sans la barre de progression graphique).
+    À chaque tour : calcule les changements de vitesse, avance les chevaux via DISTANCE_CHART,
+    gère disqualifications/arrivées, affiche l’état, attend Entrée avec next_turn.
+    À la fin, annonce le tiercé/quarté/quinté en fonction de race_type.
         :param horses: la liste des chevaux
         :param race_type: le type de course
         :return:
@@ -212,7 +221,8 @@ def start_game(horses,race_type):
 
 def init_horses(num_horses) :
     """
-    Créé un dictionnaire contenant les différents paramètres que l'on désire suivre
+    Crée et renvoie la liste des chevaux (dictionnaires) initialisés : vitesse 0, non disqualifiés, distance 0, no
+    n arrivés, identifiant 1..num_horses, et couleur par défaut pour l’affichage.
     :param num_horses:
     :return:
     """
@@ -232,7 +242,8 @@ def init_horses(num_horses) :
 
 def ask_horse_race_type():
     """
-    Demande le type de course
+    Demande à l’utilisateur le type de course ("tierce", "quarte", "quinte").
+    Repose la question tant que l’entrée n’est pas valide. Renvoie la chaîne choisie.
     :return:
     """
     race_type = input("Quel type de course ? (tierce,quarte,quinte) : ")
